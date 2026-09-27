@@ -19,7 +19,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  نشر:
+  # معرّف الوظيفة لاتيني إلزامًا: GitHub Actions يرفض الملف كلّه إن كان بالعربية،
+  # ويفشل التشغيل قبل إنشاء أي وظيفة. العربية تصلح في name وحده.
+  deploy:
+    name: نشر
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -30,6 +33,8 @@ jobs:
 
       - name: تهيئة Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true   # يفعّل Pages على وضع "GitHub Actions" إن لم يكن مفعّلًا
 
       - name: رفع مجلد اللعبة
         uses: actions/upload-pages-artifact@v3
