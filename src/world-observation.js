@@ -204,7 +204,7 @@
     name:"الملاحظة", label:"عالم الملاحظة", skillName:"الملاحظة", input:"الأشكال", action:"ابحث",
     topRank:"ملاحظ بارع",
     nebula:{ a:'#2D4E8A', b:'#2A5C6E' },
-    accent:{ solid:'#5B8CFF', dim:'rgba(91,140,255,0.18)' },
+    accent:{ solid:'#2F5FE0', dim:'rgba(47,95,224,0.12)' },
     intro:{
       icon: `<svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
       text: `<b>عالم الملاحظة</b> تحدٍّ في سرعة العين. ستظهر مجموعة أشكال متشابهة، ومهمتك العثور على العنصر المختلف بينها — أحيانًا بالنوع، الحجم، اللون، أو حتى الحركة — قبل انتهاء الوقت.`

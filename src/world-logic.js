@@ -442,7 +442,7 @@
     name:"المنطق", label:"عالم المنطق", skillName:"المنطق", input:"متنوع", action:"استنتج",
     topRank:"عقل استدلالي",
     nebula:{ a:'#8A6A1E', b:'#7A4E1E' },
-    accent:{ solid:'#FFB454', dim:'rgba(255,180,84,0.18)' },
+    accent:{ solid:'#A8620A', dim:'rgba(168,98,10,0.12)' },
     intro:{
       icon: `<svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2l3 6 6 1-4.5 4.5L17.5 20 12 17l-5.5 3 1-6.5L3 9l6-1z" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>`,
       text: `<b>عالم المنطق</b> تحدٍّ في الاستدلال والاستنتاج. لن تحتاج للبحث أو الحفظ هنا — بل لتحليل قاعدة أو دليل واستخدامه لاستنتاج الإجابة الصحيحة، تمامًا كأحاجي الذكاء الكلاسيكية.`

@@ -653,7 +653,7 @@
     name:"التركيز", label:"عالم التركيز", skillName:"التركيز", input:"متنوع", action:"ركّز",
     topRank:"انتباه فولاذي",
     nebula:{ a:'#8A2E4E', b:'#5C2A6E' },
-    accent:{ solid:'#FF6B8B', dim:'rgba(255,107,139,0.18)' },
+    accent:{ solid:'#C9315A', dim:'rgba(201,49,90,0.12)' },
     intro:{
       icon: `<svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>`,
       text: `<b>عالم التركيز</b> لا يطلب منك أن تجد شيئًا، بل ألّا تنخدع. ستمرّ عليك سلاسل سريعة من المحفّزات تتعمّد تضليلك — كلمة بلون مخالف لمعناها، أسهم تشدّك إلى الجهة الخطأ، أو شكل ممنوع بين أشكال اعتدت الضغط عليها. مهمتك أن تتمسّك بالقاعدة وحدها.`
