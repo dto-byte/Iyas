@@ -294,7 +294,7 @@
     accent:{ solid:'#C792EA', dim:'rgba(199,146,234,0.18)' },
     intro:{
       icon: `<svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l4 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-      text: `<b>عالم الذاكرة</b> يقيس قدرتك على تذكّر ما تراه. سيظهر أمامك شكل أو ترتيب أو موقع لثوانٍ معدودة لتحفظه، ثم يُخفى — وعليك استرجاعه بالضغط الصحيح بعد اختفائه.`
+      text: `<b>عالم الذاكرة</b> تحدٍّ في الاحتفاظ بما رأيته. سيظهر أمامك شكل أو ترتيب أو موقع لثوانٍ معدودة لتحفظه، ثم يُخفى — وعليك استرجاعه بالضغط الصحيح بعد اختفائه.`
     },
     keys: MEM_KEYS, templates: MEM_TEMPLATES, warmup:"count",
     canPause(){ return state.memoryPhase==='recall'; },

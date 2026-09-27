@@ -331,7 +331,7 @@
     accent:{ solid:'#4ADE9A', dim:'rgba(74,222,154,0.18)' },
     intro:{
       icon: `<svg width="20" height="20" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" fill="currentColor"/><rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="14" y="14" width="7" height="7" fill="currentColor"/></svg>`,
-      text: `<b>عالم الأنماط</b> يقيس قدرتك على إدراك البنية والتكرار البصري. ستلاحظ تناظرًا أو دورانًا أو نمطًا متكررًا، ومهمتك إكماله أو إيجاد ما يكسره — إدراك بصري لا حفظ ولا حساب.`
+      text: `<b>عالم الأنماط</b> تحدٍّ في إدراك البنية والتكرار البصري. ستلاحظ تناظرًا أو دورانًا أو نمطًا متكررًا، ومهمتك إكماله أو إيجاد ما يكسره — إدراك بصري لا حفظ ولا حساب.`
     },
     keys: PATTERN_KEYS, templates: PATTERN_TEMPLATES, warmup:"scalepredict",
     maxAttempts: 8,

@@ -89,6 +89,32 @@ function checkText(where, text) {
   }
 }
 
+/* ===== وحدة: الادّعاء التسويقي ===== */
+/* اللعبة تدريب وتحدٍّ، لا أداة قياس ولا علاج. انتقال أثر تدريب الدماغ إلى القدرة
+   المعرفية العامة ضعيف الدعم في الأدبيات، وادّعاؤه هو ما غُرّمت عليه Lumosity
+   مليوني دولار عام ٢٠١٦. فكل نص عام — واجهة اللاعب، بيان التطبيق، README —
+   يُفحص هنا، ويُرفض إن ادّعى قياس قدرة اللاعب أو تحسين ذكائه أو أثرًا طبيًّا.
+   الصياغة المقبولة تصف ما يفعله اللاعب في الجولة، لا ما تفعله اللعبة بعقله. */
+const CLAIM = [
+  [/يقيس|تقيس|نقيس|مقياس|قياس/, 'ادّعاء قياس'],
+  [/قدرتك|قدراتك|قدرتكم/, 'ادّعاء عن قدرة اللاعب'],
+  [/ذكاءك|ذكائك|ذكاءكم|IQ/, 'ادّعاء عن الذكاء'],
+  [/دماغك|مخّك|عقلك/, 'ادّعاء عن دماغ اللاعب'],
+  [/يحسّن|يطوّر قدرت|ينشّط|تنشيط/, 'ادّعاء تحسين'],
+  [/الزهايمر|الخرف|التدهور المعرفي|يعالج|علاج/, 'ادّعاء طبي'],
+];
+function checkClaims(where, text) {
+  const t = String(text).replace(/<[^>]+>/g, ' ').replace(/s+/g, ' ');
+  for (const [re, why] of CLAIM) {
+    const m = t.match(re);
+    if (!m) continue;
+    /* يُعرض محيط المطابقة لا صدر الملف: الملفات العامة طويلة والموضع هو المطلوب */
+    const at = t.indexOf(m[0]);
+    const ctx = t.slice(Math.max(0, at - 35), at + m[0].length + 45).trim();
+    problems.push(`${why} في ${where}: «…${ctx}…»`);
+  }
+}
+
 /* ===== وحدة: المعدود العربي ===== */
 /* ١ مفرد · ٢ مثنى · ٣-١٠ جمع · ١١+ مفرد منصوب — والقاعدة تدور على آخر خانتين */
 const N = { one:'جلسة', two:'جلستان', few:'جلسات', many:'جلسة' };
@@ -114,6 +140,21 @@ if (MAD.countedWith(3, N) !== '٣ جلسات')
   problems.push(`المعدود: countedWith(3) أعاد "${MAD.countedWith(3, N)}"`);
 console.log(`  ✓ المعدود العربي: ${countedOk}/${cases.length} حالة صحيحة`);
 
+let claimTexts = 0;
+for (const wk of MAD.WORLD_ORDER) {
+  const w = MAD.WORLDS[wk];
+  [['تعريف', w.intro && w.intro.text], ['اسم', w.label], ['مهارة', w.skillName], ['رتبة', w.topRank]]
+    .forEach(([kind, v]) => { if (v) { checkClaims(`${wk}/${kind}`, v); claimTexts++; } });
+}
+/* الملفات العامة: ما يقرأه محرك البحث والزائر قبل أن يلعب */
+for (const rel of ['index.html', 'manifest.webmanifest', '../README.md']) {
+  const p = path.join(SRC, rel);
+  if (!fs.existsSync(p)) { problems.push(`ملف عام مفقود: ${rel}`); continue; }
+  checkClaims(rel, fs.readFileSync(p, 'utf8'));
+  claimTexts++;
+}
+console.log(`  ✓ الادّعاء التسويقي: فُحص ${claimTexts} نصًّا عامًّا`);
+
 let texts = 0;
 for (const wk of MAD.WORLD_ORDER) {
   const w = MAD.WORLDS[wk];
@@ -125,6 +166,7 @@ for (const wk of MAD.WORLD_ORDER) {
         let ch;
         try { ch = w.build(key, d, 2, seed); } catch (e) { problems.push(`${wk}/${key}: استثناء — ${e.message}`); continue; }
         checkText(`${wk}/${key}/د${d}`, ch.goal);
+        checkClaims(`${wk}/${key}/د${d}`, ch.goal);
         texts++;
         // نصوص خيارات "text" تُعرض للاعب أيضًا
         if (ch.payload && ch.payload.optionType === 'text' && Array.isArray(ch.payload.options)) {
