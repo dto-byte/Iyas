@@ -1,0 +1,41 @@
+# نشر إياس على GitHub Pages
+# يُنشر محتوى مجلد src/ وحده — لا المستودع كله. فالاختبارات وخادم التطوير
+# وملف السياق تبقى في المستودع ولا تُرفع إلى الموقع المنشور.
+name: نشر الموقع
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # يتيح النشر يدويًا من تبويب Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# نشرة واحدة في كل مرة، ولا تُلغى نشرة جارية في منتصفها
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  نشر:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: جلب المستودع
+        uses: actions/checkout@v4
+
+      - name: تهيئة Pages
+        uses: actions/configure-pages@v5
+
+      - name: رفع مجلد اللعبة
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: src
+
+      - name: النشر
+        id: deployment
+        uses: actions/deploy-pages@v4

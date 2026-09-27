@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "eyas",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "tests/serve.js"
+      ],
+      "port": 8131
+    }
+  ]
+}
