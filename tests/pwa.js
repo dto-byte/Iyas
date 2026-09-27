@@ -54,6 +54,7 @@ for (const ic of (mf && mf.icons) || []) {
 /* ===================== ٣) قائمة التخزين تطابق الواقع ===================== */
 console.log('\n٣) قائمة التخزين في عامل الخدمة');
 const swSrc = read('sw.js');
+const pwaSrc = read('pwa.js');
 const shellMatch = swSrc.match(/const SHELL = \[([\s\S]*?)\];/);
 ok(!!shellMatch, 'قائمة SHELL موجودة في sw.js');
 const shell = shellMatch ? [...shellMatch[1].matchAll(/'([^']+)'/g)].map(m => m[1].replace(/^\.\//, '')) : [];
@@ -76,8 +77,14 @@ ok(ghosts.length === 0,
 ok(/const CACHE = '[a-z][a-z-]*-v\d+'/.test(swSrc), 'اسم المخزن يحمل رقم نسخة');
 ok(swSrc.includes("caches.keys()") && swSrc.includes('caches.delete'),
   'التفعيل يحذف المخازن القديمة (وإلا تراكمت نسخ ميتة)');
-ok(!/self\.skipWaiting\(\)\s*;?\s*$/m.test(swSrc.split('message')[0]),
-  'لا تفعيل فوري تلقائي — لا تنقطع جلسة جارية تحت أقدام اللاعب');
+ok(swSrc.split('message')[0].includes('self.skipWaiting()'),
+  'التفعيل فوري — الانتظار كان يُبقي اللاعب على نسخة قديمة بلا مؤشّر');
+ok(/fetch\(req,\s*\{\s*cache:\s*'reload'\s*\}\)/.test(swSrc),
+  'طلب التنقّل يتجاوز تخزين المتصفح (max-age=600 كان يخدم صفحة قديمة)');
+ok(pwaSrc.includes("dataset.screen === 'game'") && pwaSrc.includes('location.reload()'),
+  'إعادة التحميل مؤجَّلة ما دامت جولة جارية');
+ok(pwaSrc.includes('reg.update()') && pwaSrc.includes('visibilitychange'),
+  'التحديث يُفحص عند كل فتح وعند العودة إلى التطبيق');
 ok(swSrc.includes("req.mode === 'navigate'"), 'طلبات التنقّل لها مسار خاص (شبكة أولًا)');
 
 /* ===================== ٤) الواجهة داخل المتصفح المحاكى ===================== */

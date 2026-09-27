@@ -20,6 +20,12 @@
     navigator.serviceWorker.register('sw.js').then(reg => {
       /* نسخة جديدة تنتظر منذ اللحظة الأولى (اللاعب فتح الصفحة وفيها تحديث) */
       if(reg.waiting) markUpdate(reg.waiting);
+      /* المتصفح يفحص sw.js عند التنقّل فقط. تطبيق مثبَّت يُفتح ويُغلق بلا
+         تنقّل، فقد يبقى شهورًا بلا فحص — نطلبه صراحةً عند كل فتح وعند كل
+         عودة إلى الواجهة. */
+      const check = () => { try{ reg.update(); }catch(e){} };
+      check();
+      document.addEventListener('visibilitychange', () => { if(!document.hidden) check(); });
       reg.addEventListener('updatefound', () => {
         const sw = reg.installing;
         if(!sw) return;
@@ -31,12 +37,18 @@
     }).catch(err => console.warn('تعذّر تسجيل عامل الخدمة:', err));
 
     /* بعد موافقة اللاعب على التحديث يتبدّل المتحكّم، فنُعيد التحميل مرة واحدة */
+    /* تبدّل المتحكّم يعني أن نسخة جديدة صارت فعّالة. نُعيد التحميل لتسري،
+       لكن ليس فوق جلسة جارية: ننتظر عودة اللاعب إلى شاشة البداية.
+       الحالة تُقرأ من body[data-screen] الذي يضبطه ui-chrome.js. */
     let reloading = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
+    function applyWhenIdle(){
       if(reloading) return;
+      const busy = document.body.dataset.screen === 'game';
+      if(busy){ setTimeout(applyWhenIdle, 1500); return; }
       reloading = true;
       location.reload();
-    });
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', applyWhenIdle);
   }
 
   function markUpdate(sw){
