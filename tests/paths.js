@@ -100,6 +100,38 @@ const ok=(cond,msg)=>console.log((cond?"  ✓ ":"  ✗ ")+msg)||(!cond&&errs.pus
   ok(!!(document.getElementById("startBtn").compareDocumentPosition(introEl) & 4),
      "زر البدء يسبق شرح العالم في ترتيب الصفحة");
 
+  console.log("\n٩) هندسة الأشكال: الثقب والتخطيط الصفّي");
+  /* "القطعة الناقصة" كان ثقبها دائرةً مطليّة بلون الخلفية الليلية، فظهرت
+     نقطةً سوداء على الأرضية النهارية. صارت قناعًا يقطع الشكل فعلًا — ولهذا
+     صار موضعها مهمًّا: موضع واحد ثابت كان يقع خارج المثلث والصليب، فيصير
+     القالب بلا جواب. لكل شكل موضع على حافّته. */
+  const src = fs.readFileSync(path.join(SRC,"engine-core.js"),"utf8");
+  ok(!src.includes("#0B0E14"), "لا ثقب مطليّ بلون خلفية (يتبع الخلفية ويفسد مع تغيّرها)");
+  const notchAt = {};
+  MAD.SHAPE_TYPES.forEach(t => {
+    const m = MAD.shapeSVG(t, "#123456", true, false).match(/<circle cx="(\d+)" cy="(\d+)"/);
+    notchAt[t] = m ? (m[1] + "," + m[2]) : null;
+  });
+  ok(MAD.SHAPE_TYPES.every(t => notchAt[t]), "كل شكل يُنتج ثقبًا");
+  ok(MAD.SHAPE_TYPES.filter(t => t !== "circle").every(t => notchAt[t] !== notchAt.circle),
+     "لا شكل يسقط إلى موضع الدائرة الافتراضي: " + JSON.stringify(notchAt));
+
+  /* صفّ واحد لا يتّسع لأكثر من ستّة أهداف بحجم ٤٤ بكسل على عرض ٣٤٣:
+     ٤٤÷٣٤٣ ≈ ١٢.٨٪، فالتباعد الأفقي داخل الصفّ يجب ألّا ينزل عن ١٣٪. */
+  let tight = null;
+  for (let n = 2; n <= 12 && !tight; n++) {
+    const pts = MAD.rowLayout(n);
+    const rows = {};
+    pts.forEach(p => { const k = Math.round(p.y); (rows[k] = rows[k] || []).push(p.x); });
+    Object.keys(rows).forEach(k => {
+      const xs = rows[k].slice().sort((a,b) => a - b);
+      for (let i = 1; i < xs.length; i++) if (xs[i] - xs[i-1] < 13) tight = n + " عنصرًا: تباعد " + Math.round(xs[i] - xs[i-1]) + "٪";
+    });
+  }
+  ok(!tight, "التخطيط الصفّي لا يتراكب حتى ١٢ عنصرًا" + (tight ? " — " + tight : ""));
+  ok(new Set(MAD.rowLayout(10).map(p => Math.round(p.y))).size > 1, "ما زاد عن صفّ يلتفّ إلى صفّ تالٍ");
+  ok(MAD.rowLayout(6)[0].x > MAD.rowLayout(6)[5].x, "الصفّ يُقرأ من اليمين إلى اليسار");
+
   console.log("\n"+(errs.length?("=== أخطاء ===\n"+[...new Set(errs)].join("\n")):"صفر أخطاء في كل المسارات."));
   process.exit(errs.length?1:0);
 })();

@@ -261,6 +261,20 @@
     if(n === 2) return counted(n, forms);
     return toArabicDigits(n) + ' ' + counted(n, forms);
   }
+  /* موضع الثقب لكل شكل: نقطة على حافّته لا في فراغ صندوقه. غيابُ نوع من
+     هذا الجدول يجعل الثقب لا يقطع شيئًا، فيصير قالب "القطعة الناقصة" بلا
+     جواب — لذلك يحرسه tests/paths.js. */
+  const NOTCH_AT = {
+    circle:   { x:33, y:13, r:8 },
+    square:   { x:38, y:10, r:8 },
+    triangle: { x:31, y:21, r:8 },
+    diamond:  { x:32, y:13, r:8 },
+    hexagon:  { x:38, y:22, r:8 },
+    star:     { x:22, y:6,  r:7 },
+    ring:     { x:34, y:10, r:8 },
+    cross:    { x:22, y:8,  r:7 }
+  };
+  let notchSeq = 0;
   function shapeSVG(type, color, notch, outlineOnly){
     const c = color;
     const fillAttr = outlineOnly ? `fill="none" stroke="${c}" stroke-width="4"` : `fill="${c}"`;
@@ -279,7 +293,16 @@
         break;
       default: base = `<circle cx="22" cy="22" r="17" ${fillAttr}/>`;
     }
-    if(notch){ base += `<circle cx="36" cy="10" r="9" fill="#0B0E14"/>`; }
+    if(notch){
+      /* معرّف فريد لكل نسخة: أقنعة SVG تُشار إليها بالمعرّف على مستوى
+         المستند كلّه، فتكراره يجعل كل الأشكال تتبع قناعًا واحدًا. */
+      const id = 'notch' + (++notchSeq);
+      const n = NOTCH_AT[type] || NOTCH_AT.circle;
+      return `<defs><mask id="${id}">` +
+             `<rect x="0" y="0" width="44" height="44" fill="#fff"/>` +
+             `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="#000"/></mask></defs>` +
+             `<g mask="url(#${id})">${base}</g>`;
+    }
     return base;
   }
 
@@ -295,9 +318,20 @@
     }
     return pts;
   }
-  function rowLayout(count){
-    const pts = []; const margin = 12; const span = 100 - margin*2;
-    for(let i=0;i<count;i++){ pts.push({ x: margin + (span * (i/(count-1||1))), y: 50 }); }
+  function rowLayout(count, perRow){
+    const per = Math.max(2, perRow || 6);
+    const rows = Math.ceil(count / per);
+    const margin = 12, span = 100 - margin*2;
+    const step = span / (per - 1);
+    const pts = [];
+    for(let i=0;i<count;i++){
+      const r = Math.floor(i/per), idx = i - r*per;
+      /* الخطوة ثابتة في كل الصفوف فيبقى الإيقاع البصري واحدًا، والصفّ
+         الأخير أقصر فحسب. والمحور معكوس ليبدأ أول عنصر من اليمين. */
+      const x = 100 - (margin + step*idx);
+      const y = rows === 1 ? 50 : (100/(rows+1)) * (r+1);
+      pts.push({ x, y });
+    }
     return pts;
   }
   function mirrorLayout(pairCount){
