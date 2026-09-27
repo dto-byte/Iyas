@@ -433,6 +433,72 @@
     .stat-grid{grid-template-columns:repeat(2,1fr);}
     .hud-item{min-width:64px;padding:7px 10px;}
   }
+
+  /* ====================================================================
+     هيكل الواجهة بحسب الشاشة — السمة يضبطها ui-chrome.js
+     ==================================================================== */
+
+  /* أثناء اللعب والنتيجة والسجلّ: الشعار الكبير والعنوان يزاحمان لوحة
+     الجولة على الهاتف ولا يفيدان اللاعب — الهوية مكانها شاشة البداية.
+     القواعد موجبة لا سالبة: إن غابت السمة (لم يُحمَّل ui-chrome.js)
+     بقيت الترويسة ظاهرة كما كانت. */
+  body[data-screen="game"] .brand,
+  body[data-screen="result"] .brand,
+  body[data-screen="progress"] .brand{ display:none; }
+
+  body[data-screen="game"] #app{ padding-top:12px; }
+  body[data-screen="game"] .copyright-footer{ display:none; }
+
+  /* ====================================================================
+     الإعدادات: لوحة منزلقة من الأسفل بدل تمدّد الصفحة
+     كان فتحها يطيل شاشة البداية حتى يلزم التمرير للوصول إلى آخرها،
+     فتقرأ كصفحة لا كلعبة. الآن تعلو فوق الشاشة وتمرّر داخل نفسها.
+     ==================================================================== */
+  details.adv-settings[open]{
+    position:fixed; inset:auto 0 0 0; z-index:60;
+    max-height:82dvh; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    margin:0 auto; max-width:680px; border-radius:16px 16px 0 0; border-bottom:none;
+    box-shadow:0 -24px 60px rgba(0,0,0,0.55);
+    background:#0E1220;
+    padding:12px 16px calc(20px + env(safe-area-inset-bottom));
+  }
+  /* غشاوة تُظلم ما خلف اللوحة. z-index:-1 داخل سياق التكديس الذي أنشأه
+     العنصر نفسه، فتقع خلف اللوحة وفوق الصفحة. */
+  details.adv-settings[open]::before{
+    content:''; position:fixed; inset:0; z-index:-1;
+    background:rgba(3,6,12,0.62);
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  }
+  details.adv-settings[open] summary{
+    position:sticky; top:-12px; z-index:1;
+    background:#0E1220;
+    margin:-12px -16px 12px; padding:16px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+    min-height:52px;
+  }
+  details.adv-settings[open] summary::after{
+    content:'✕ إغلاق'; font-size:12px; font-weight:700; color:var(--muted);
+  }
+
+  /* ====================================================================
+     شاشة البداية على الهاتف: تُقرأ كلعبة لا كمستند
+     ترويسة أصغر، وهوامش أضيق، وترتيب يضع القرار قبل الشرح.
+     ==================================================================== */
+  @media (max-width:520px){
+    #app{ padding:14px 14px 24px; }
+    .brand{ margin-bottom:8px; gap:4px; }
+    .logo-glow, .logo-glow img{ width:54px; height:62px; }
+    .logo-glow::before{ inset:-10px; }
+    .game-title{ font-size:26px; }
+    .orbit-wheel-wrap{ margin:8px 0 6px; }
+    .settings-label{ margin:10px 0 5px; }
+
+    .start-btn{ padding:15px 34px; width:100%; max-width:320px; }
+
+    body[data-screen="game"] .hud{ margin-bottom:8px; }
+    body[data-screen="game"] details.debug{ margin-top:10px; padding:8px 12px; }
+  }
 </style>
 </head>
 <body>
@@ -475,13 +541,6 @@
     </div>
     <div class="world-select" id="worldSelect" style="display:none;"><!-- يُبنى تلقائيًا من سجلّ العوالم في engine-core.js --></div>
 
-    <div class="world-intro" id="worldIntro"></div>
-
-    <div class="best-preview" id="worldBestInfo"></div>
-
-    <div id="streakMount"><!-- يُبنى في progress.js --></div>
-    <div id="pwaMount"><!-- يُبنى في pwa.js --></div>
-
     <div class="settings-label">اختر مستوى الصعوبة</div>
     <div class="controls" style="justify-content:center;">
       <div class="diff-select" id="diffSelect">
@@ -492,9 +551,17 @@
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:14px;">
+    <div class="start-wrap" style="text-align:center;margin-top:14px;">
       <button class="start-btn" id="startBtn"><svg class="spark" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="currentColor"/></svg>ابدأ الجلسة</button>
     </div>
+
+    <div class="world-intro" id="worldIntro"></div>
+
+    <div class="best-preview" id="worldBestInfo"></div>
+
+    <div id="streakMount"><!-- يُبنى في progress.js --></div>
+    <div id="pwaMount"><!-- يُبنى في pwa.js --></div>
+
 
     <details class="adv-settings" id="advSettings">
       <summary>⚙ الإعدادات وتخصيص القوالب</summary>
@@ -585,6 +652,7 @@
 <script src="world-focus.js"></script>
 <script src="progress.js"></script>
 <script src="pwa.js"></script>
+<script src="ui-chrome.js"></script>
 
 </body>
 </html>

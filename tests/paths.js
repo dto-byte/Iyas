@@ -78,6 +78,28 @@ const ok=(cond,msg)=>console.log((cond?"  ✓ ":"  ✗ ")+msg)||(!cond&&errs.pus
     ok(MAD.WORLDS.memory.canPause({})===false,"خطّاف canPause يرفض الإيقاف خارج مرحلة الاسترجاع");
   } else { console.log("  ~ لم نلتقط مرحلة الحفظ في هذا التوقيت (مرحلة="+MAD.state.memoryPhase+")"); }
 
+  console.log("\n٨) سمة الشاشة على body وترتيب شاشة البداية");
+  /* ui-chrome.js يترجم تبديل المحرك للشاشات (style.display المباشر) إلى
+     body[data-screen]، وعليها يبني CSS هيكلًا مختلفًا لكل شاشة — أبرزه إخفاء
+     الشعار والعنوان أثناء اللعب. بلا هذه السمة تعود الترويسة الكبيرة فوق
+     لوحة الجولة على الهاتف، وهي ملاحظة جاءت من تجربة على جهاز حقيقي. */
+  click("#homeBtn"); click("#homeBtn"); await wait(120);
+  ok(document.body.dataset.screen==="setup","body[data-screen] = setup على شاشة البداية");
+  click('.world-btn[data-w="observation"]'); click("#startBtn"); await wait(1400);
+  ok(document.body.dataset.screen==="game","body[data-screen] = game بعد بدء الجلسة");
+  click("#homeBtn"); click("#homeBtn"); await wait(120);
+  ok(document.body.dataset.screen==="setup","السمة تعود إلى setup بعد الخروج");
+
+  const css = fs.readFileSync(path.join(SRC,"index.html"),"utf8");
+  const at = css.indexOf('body[data-screen="game"] .brand');
+  ok(at > 0 && css.slice(at, at + 240).includes("display:none"),
+     "قاعدة إخفاء الترويسة أثناء اللعب موجودة في CSS");
+
+  /* الشاشة الأولى قرار لا قراءة: زر البدء قبل شرح العالم في ترتيب DOM */
+  const introEl = document.getElementById("worldIntro");
+  ok(!!(document.getElementById("startBtn").compareDocumentPosition(introEl) & 4),
+     "زر البدء يسبق شرح العالم في ترتيب الصفحة");
+
   console.log("\n"+(errs.length?("=== أخطاء ===\n"+[...new Set(errs)].join("\n")):"صفر أخطاء في كل المسارات."));
   process.exit(errs.length?1:0);
 })();

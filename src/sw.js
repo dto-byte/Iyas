@@ -5,7 +5,7 @@
    قاعدة التحديث: عند تغيير أي ملف في src/ **ارفع رقم CACHE**. وإلا بقي
    المتصفح يخدم النسخة القديمة من الذاكرة المؤقتة ولن يرى المستخدم تعديلك.
    ===================================================================== */
-const CACHE = 'eyas-v2';
+const CACHE = 'eyas-v3';
 
 /* هيكل التطبيق: كل ما يلزم لتشغيل جلسة كاملة بلا شبكة */
 const SHELL = [
@@ -19,7 +19,7 @@ const SHELL = [
   './world-pattern.js',
   './world-focus.js',
   './progress.js',
-  './pwa.js',
+  './pwa.js','./ui-chrome.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
